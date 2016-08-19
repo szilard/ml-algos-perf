@@ -21,7 +21,7 @@ strategies, data attributes to be varied, datasets, accuracy measures etc.
 
 2. Make a "minimal viable product" that is study the behavior of a limited set of algos with
 a limited number of implementations and 
-limited tuning on simulated data with changing a limited variety of characteristics 
+limited tuning on *simulated data* with changing a limited variety of characteristics 
 (e.g. dataset size, signal/noise ratio etc.)
 using a limited number of accuracy measures (e.g. AUC).
 
