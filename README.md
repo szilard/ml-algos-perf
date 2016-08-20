@@ -11,10 +11,10 @@ Despite the no-free lunch theorem, there are a handful of supervised learning al
 performing the best (using various accuracy measures) on a wide range of datasets encountered in
 practice - see e.g. [academic research](https://www.cs.cornell.edu/~caruana/ctp/ct.papers/caruana.icml06.pdf)
 or the results of many Kaggle competitions. These algorithms are random forests, gradient boosting machine,
-support vector machines, deep learning neural networks, while combining these further into ensembles provides
-usually further increase in accuracy. 
+support vector machines and deep learning neural networks - and furthermore,
+combining them into ensembles provides usually some additional increase in accuracy. 
 
-This repo/research will start with 2 main directions:
+This repo/research will start with 2 main tasks:
 
 1. Make a broad plan for the subject of study of this research in terms of algorithms, implementations, tuning
 strategies, data attributes to be varied, datasets, accuracy measures etc.
@@ -24,6 +24,8 @@ a limited number of implementations and
 limited tuning on *simulated data* with changing a limited variety of characteristics 
 (e.g. dataset size, signal/noise ratio etc.)
 using a limited number of accuracy measures (e.g. AUC).
+
+Then we'll try to tackle the various directions in #1 above.
 
 
 
