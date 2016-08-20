@@ -5,7 +5,7 @@ This repo is intended as a *playground* for experimentation with various machine
 learning algorithms (primarily supervised learning) in order to understand their performance characteristics
 as a function of the attributes of the datasets used for training such as size, structure, sparsity,
 type of variables (numeric/categorical), special types of data (e.g. images, text),
-complexity, signal/noise ratio etc.
+complexity, signal/noise ratio etc. Users are encouraged to add models and data following the guidelines and examples provided by the original contributors.
 
 Despite the no-free lunch theorem, there are a handful of supervised learning algorithms that are 
 performing the best (using various accuracy measures) on a wide range of datasets encountered in
