@@ -24,7 +24,7 @@ strategies, data attributes to be varied, datasets, accuracy measures etc.
 a limited number of implementations and 
 limited tuning on *simulated data* with changing a limited variety of characteristics 
 (e.g. dataset size, signal/noise ratio etc.)
-using a limited number of accuracy measures (e.g. AUC). The work has started 
+using a limited number of accuracy measures (e.g. AUC). This later work has started 
 [here](simul).
 
 Then we'll try to tackle the various directions in #1 above.
