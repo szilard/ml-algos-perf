@@ -30,7 +30,8 @@ using a limited number of accuracy measures (e.g. AUC). This latter work has sta
 Then we'll try to tackle the various directions in #1 above.
 
 While some ideas to have something like this go back years before, 
-this project was started by a discussion at KDD conference by @szilard and @jphall663. 
+this project was started by a discussion at KDD conference by [@szilard](https://github.com/szilard) 
+and [@jphall663](https://github.com/jphall663). 
 Others interested are encouraged to add models and data following the guidelines and examples 
 provided by the original contributors.
 
