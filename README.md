@@ -5,12 +5,12 @@ This repo is intended as a *playground* for experimentation with various machine
 learning algorithms (primarily supervised learning) in order to understand their performance characteristics
 as a function of the attributes of the training datasets such as size, number of variables, structure, sparsity,
 type of variables (numeric/categorical), special types of data (e.g. images, text),
-complexity, signal/noise ratio etc. Users are encouraged to add models and data following the guidelines and examples provided by the original contributors.
+complexity, signal/noise ratio etc.
 
 Despite the no-free lunch theorem, there are a handful of supervised learning algorithms that are 
 performing the best (using various accuracy measures) on a wide range of datasets encountered in
 practice - see e.g. [academic research](https://www.cs.cornell.edu/~caruana/ctp/ct.papers/caruana.icml06.pdf)
-or the results of many Kaggle competitions. These algorithms are random forests, gradient boosting machines,
+or the results of many Kaggle competitions. These algorithms are mainly random forests, gradient boosting machines,
 support vector machines and deep learning neural networks - and furthermore,
 combining them into ensembles provides usually some additional increase in accuracy. 
 The goal of this project is to understand the performance characteristics of these very best methods.
@@ -29,5 +29,9 @@ using a limited number of accuracy measures (e.g. AUC). This latter work has sta
 
 Then we'll try to tackle the various directions in #1 above.
 
-
+While some ideas to have something like this go back many years, 
+this project was started by a discussion at the KDD 2016 conference by [@szilard](https://github.com/szilard) 
+and [@jphall663](https://github.com/jphall663). 
+Others interested are encouraged to contribute (e.g. add models or data) following the guidelines and examples 
+provided by the project leads.
 
