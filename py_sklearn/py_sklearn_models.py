@@ -14,10 +14,12 @@ scripts must create a list with the following elements:
 * data description
 * performance
 
-This resulting list should be appended to the global models list at the end of
-each contributors script. The results in the global models list will be
-described automatically with a table and plot in the main repo results.md
-file.
+This resulting list should be appended to the models list at the end of
+each contributor's model. The results in the models list will be described 
+automatically with a table and plot in the main repo results.md file.
+
+Run the gen_results.py script after adding (and testing) models to this file to
+regenerate results.md with the new, contributed model's results. 
 
 """
 
@@ -25,11 +27,15 @@ file.
 import inspect
 import os
 import re
-import shutil
 
 def run_models():
 
-    """ Contributors add Scikit-learn models in this function. """
+    """ Contributors add h2o.ai models in this function. 
+    
+    Returns:
+        models: list of all contributed modeling scripts results.
+        
+    """
 
     ### list to contain all individual model results
     models = []
@@ -61,7 +67,7 @@ def gen_table_md(models, section_header, table_header_list, out_txt_fname):
 
     # conditional delete/open markdown file
     if os.path.exists(out_txt_fname):
-        shutil.rmtree(out_txt_fname, ignore_errors=True)
+        os.remove(out_txt_fname)
     out = open(out_txt_fname, 'wb')
 
     # write section header markdown
