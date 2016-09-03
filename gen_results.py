@@ -63,7 +63,7 @@ def gen_tables_md(ext_cmd_dict, listing):
                 os.chdir(entry)
                 os.system(' '.join([cmd, model_fname]))
                 os.chdir('..')
-                
+
     print 'Model files executed in %.2f s.' % (time.time()-tic)
 
 def concat_tables(listing):
@@ -113,7 +113,7 @@ def main():
 
     """
 
-    ### download data 
+    ### download data
     uci_fetcher = UCIDataMatrixFetcher.UCIDataMatrixFetcher()
     for tsk_prfx in ['cla', 'reg']:
         tsk_mtrx_url_lst = uci_fetcher.fetch_task_matrix_url_list(tsk_prfx)
@@ -123,7 +123,7 @@ def main():
         )
         uci_fetcher.fetch_data(data_folder_link_list, tsk_prfx)
 
-    ### execute models and generate results    
+    ### execute models and generate results
     listing = os.listdir('.')
     gen_tables_md(EXT_CMD_DICT, listing)
     concat_tables(listing)
