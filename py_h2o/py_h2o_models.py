@@ -87,9 +87,7 @@ def gen_table_md(models, section_header, table_header_list, out_txt_fname):
 
 def main():
 
-    """ Main
-
-        Determines output markdown filename from current filename.
+    """ Determines output markdown filename from current filename.
         Executes contributed model scripts in run_models().
         Generates results markdown file in gen_table_md().
 

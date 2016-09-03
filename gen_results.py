@@ -64,7 +64,7 @@ def concat_tables(listing):
         listing: list of directories in git repo
 
     """
-
+    
     print 'Concatenating results ...'
 
     ### conditionally delete and then open results.md file
@@ -93,9 +93,7 @@ def concat_tables(listing):
 
 def main():
 
-    """ Main
-
-        Determines folders in git repo.
+    """ Determines folders in git repo.
         Generate results markdown table files by calling model files
             in gen_tables_md().
         Concatenates markdown table files in concat_tables().
