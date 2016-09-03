@@ -116,7 +116,6 @@ class UCIDataMatrixFetcher(object):
             lnk_lst: list of potential folders with plain text data matrices
             tsk_prfx: cla for classification or reg for regression
 
-
         """
 
         tic = time.time()
