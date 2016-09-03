@@ -113,6 +113,9 @@ class UCIDataMatrixFetcher(object):
         matrices when available.
 
         Args:
+            lnk_lst: list of potential folders with plain text data matrices
+            tsk_prfx: cla for classification or reg for regression
+
 
         """
 
