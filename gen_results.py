@@ -2,7 +2,6 @@
 """
 gen_results.py
 
-
 This script downloads UCI data matrices, executes model files, and concatenates
 their results into results.md.
 
@@ -114,9 +113,8 @@ def main():
 
     """
 
-    ### downlaod data 
-    uci_fetcher = UCIDataMatrixFetcher()
-
+    ### download data 
+    uci_fetcher = UCIDataMatrixFetcher.UCIDataMatrixFetcher()
     for tsk_prfx in ['cla', 'reg']:
         tsk_mtrx_url_lst = uci_fetcher.fetch_task_matrix_url_list(tsk_prfx)
         data_folder_link_list = uci_fetcher.fetch_data_folder_links_list(

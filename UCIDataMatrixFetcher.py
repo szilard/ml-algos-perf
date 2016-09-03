@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-fetch_uci_data_matrices.py
+UCIDataMatrixFetcher.py
 
 There are many types of data sets available from UCI:
 https://archive.ics.uci.edu/ml/datasets.html.
