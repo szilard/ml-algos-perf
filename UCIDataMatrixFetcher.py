@@ -26,7 +26,7 @@ from bs4 import BeautifulSoup
 class UCIDataMatrixFetcher(object):
 
     """ Instantiated and called from gen_results.py; can be run as a
-    standalaone script as well. """
+    standalone script as well. """
 
     def __init__(self):
         pass
