@@ -15,11 +15,11 @@ scripts must create a list with the following elements:
 * performance
 
 This resulting list should be appended to the models list at the end of
-each contributor's model. The results in the models list will be described 
+each contributor's model. The results in the models list will be described
 automatically with a table and plot in the main repo results.md file.
 
 Run the gen_results.py script after adding (and testing) models to this file to
-regenerate results.md with the new, contributed model's results. 
+regenerate results.md with the new, contributed model's results.
 
 """
 
@@ -30,11 +30,11 @@ import re
 
 def run_models():
 
-    """ Contributors add h2o.ai models in this function. 
-    
+    """ Contributors add h2o.ai models in this function.
+
     Returns:
         models: list of all contributed modeling scripts results.
-        
+
     """
 
     ### list to contain all individual model results

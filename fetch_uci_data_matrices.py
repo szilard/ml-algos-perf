@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-get_uci_data_matrices.py
+fetch_uci_data_matrices.py
 
 There are many types of data sets available from UCI:
 https://archive.ics.uci.edu/ml/datasets.html.
@@ -10,7 +10,7 @@ The most readily usable are data matrices stored as plain text.
 UCI also provides the facility to search available data by type and task.
 Structured URLs are associated with each search.
 
-This script uses a structured URL to determine the data sets associated with a
+This class uses a structured URL to determine the data sets associated with a
 given task, determines which of these data sets are stored as data matrices,
 determines the data folder location for these data matrices, and downloads the
 data matrices if they are available as plain text.
@@ -23,110 +23,124 @@ import time
 import urllib2
 from bs4 import BeautifulSoup
 
-DIV_BAR = '===================================================================='
+class UCIDataMatrixFetcher(object):
 
-def fetch_task_matrix_url_list(tsk_prfx):
+    """ Instantiated and called from gen_results.py; can be run as a
+    standalaone script as well. """
 
-    """ Uses structured URL from UCI to created sorted, deduped list of
-    potential datasets associated with the task specified by tsk_prfx.
+    def __init__(self):
+        pass
 
-    Args:
-        tsk_prfx: cla for classification or reg for regression
+    @staticmethod
+    def fetch_task_matrix_url_list(tsk_prfx):
 
-    Returns:
-        tsk_mtrx_urllst: sorted, deduped list of potential datasets
+        """ Uses structured URL from UCI to created sorted, deduped list of
+        potential datasets associated with the task specified by tsk_prfx.
 
-    """
+        Args:
+            tsk_prfx: cla for classification or reg for regression
 
-    tic = time.time()
-    print DIV_BAR
-    print 'Fetching list of potential data matrices for ' + tsk_prfx +\
-          ' task from UCI ...'
+        Returns:
+            tsk_mtrx_urllst: sorted, deduped list of potential datasets
 
-    url = 'http://archive.ics.uci.edu/ml/datasets.html?format=mat&task=' +\
-          tsk_prfx + '&sort=taskUp&view=table'
+        """
 
-    conn_ = urllib2.urlopen(url)
-    tsk_mtrx_urllst = BeautifulSoup(conn_).find_all('a')
-    tsk_mtrx_urllst = sorted(list(set([l.get('href') for l in tsk_mtrx_urllst\
-                      if l.get('href').startswith('datasets/')])))
+        tic = time.time()
+        print DIV_BAR
+        print 'Fetching list of potential data matrices for ' + tsk_prfx +\
+              ' task from UCI ...'
 
-    print 'List fetched in %.2f s.' % (time.time()-tic)
+        url = 'http://archive.ics.uci.edu/ml/datasets.html?format=mat&task=' +\
+              tsk_prfx + '&sort=taskUp&view=table'
 
-    return tsk_mtrx_urllst
+        conn_ = urllib2.urlopen(url)
+        tsk_mtrx_urllst = BeautifulSoup(conn_).find_all('a')
+        tsk_mtrx_urllst = sorted(list(set(\
+                            [l.get('href') for l in tsk_mtrx_urllst\
+                             if l.get('href').startswith('datasets/')]\
+                          )))
 
-def fetch_data_folder_links_list(lnk_lst, tsk_prfx):
+        print 'List fetched in %.2f s.' % (time.time()-tic)
 
-    """ Uses list entries in lnk_lst to determine folders from which the
-    potential data matrices for the task specified by tsk_prfx can be
-    downloaded.
+        return tsk_mtrx_urllst
 
-    Args:
-        lnk_lst: list of potential data matrices
-        tsk_prfx: cla for classification or reg for regression
+    @staticmethod
+    def fetch_data_folder_links_list(lnk_lst, tsk_prfx):
 
-    Returns:
-        A sorted, deduped list of potential data folders
+        """ Uses list entries in lnk_lst to determine folders from which the
+        potential data matrices for the task specified by tsk_prfx can be
+        downloaded.
 
-    """
+        Args:
+            lnk_lst: list of potential data matrices
+            tsk_prfx: cla for classification or reg for regression
 
-    tic = time.time()
-    print DIV_BAR
-    print 'Fetching list of potential data folder links for ' + tsk_prfx +\
-          ' task from UCI ...'
+        Returns:
+            A sorted, deduped list of potential data folders
 
-    data_folder_link_list = []
+        """
 
-    for lnk in lnk_lst:
-        conn_ = urllib2.urlopen('http://archive.ics.uci.edu/ml/' + lnk)
-        chld_lnk_lst = BeautifulSoup(conn_).find_all('a')
-        for chld_lnk in chld_lnk_lst:
-            chld_lnk = chld_lnk.get('href')
-            if chld_lnk.startswith('../machine-learning-databases'):
-                data_fldr_lnk = str(chld_lnk).replace('..', '')
-                data_fldr_lnk = 'http://archive.ics.uci.edu/ml' + data_fldr_lnk
-                data_folder_link_list.append(data_fldr_lnk)
-                # data folder link is first link
-                # that startswith('../machine-learning-databases')
-                break
+        tic = time.time()
+        print DIV_BAR
+        print 'Fetching list of potential data folder links for ' + tsk_prfx +\
+              ' task from UCI ...'
 
-    print 'List fetched in %.2f s.' % (time.time()-tic)
+        data_folder_link_list = []
 
-    # return sorted, deduped list of dataset links
-    return sorted(list(set(data_folder_link_list)))
+        for lnk in lnk_lst:
+            conn_ = urllib2.urlopen('http://archive.ics.uci.edu/ml/' + lnk)
+            chld_lnk_lst = BeautifulSoup(conn_).find_all('a')
+            for chld_lnk in chld_lnk_lst:
+                chld_lnk = chld_lnk.get('href')
+                if chld_lnk.startswith('../machine-learning-databases'):
+                    data_fldr_lnk = str(chld_lnk).replace('..', '')
+                    data_fldr_lnk = 'http://archive.ics.uci.edu/ml' +\
+                                    data_fldr_lnk
+                    data_folder_link_list.append(data_fldr_lnk)
+                    # data folder link is first link
+                    # that startswith('../machine-learning-databases')
+                    break
 
-def fetch_data(lnk_lst, tsk_prfx):
+        print 'List fetched in %.2f s.' % (time.time()-tic)
 
-    """ Connects to data folders in lnk_lst and downloads plain text data
-    matrices when available.
+        # return sorted, deduped list of dataset links
+        return sorted(list(set(data_folder_link_list)))
 
-    Args:
+    @staticmethod
+    def fetch_data(lnk_lst, tsk_prfx):
 
-    """
+        """ Connects to data folders in lnk_lst and downloads plain text data
+        matrices when available.
 
-    tic = time.time()
-    print DIV_BAR
-    print 'Fetching potential data matrices for ' + tsk_prfx +\
-          ' task from UCI ...'
+        Args:
 
-    for lnk in lnk_lst:
-        conn_ = urllib2.urlopen(lnk)
-        chld_lnk_lst = BeautifulSoup(conn_).find_all('a')
-        for chld_lnk in chld_lnk_lst:
-            chld_lnk = chld_lnk.get('href')
-            if chld_lnk.endswith('.data'):
-                print 'Downloading ' + lnk + chld_lnk + ' ...'
-                conn_ = urllib2.urlopen(lnk + chld_lnk)
-                mtrx = conn_.read()
-                out_fldr = 'data' + os.sep + tsk_prfx
-                mtrx_fname = out_fldr + os.sep + chld_lnk
-                with open(mtrx_fname, 'w+') as mxtrf:
-                    for line in mtrx.split('\n'):
-                        line = line.strip()
-                        if line != '':
-                            mxtrf.write(line + '\n')
+        """
 
-    print 'Data matrices fetched %.2f s.' % (time.time()-tic)
+        tic = time.time()
+        print DIV_BAR
+        print 'Fetching data matrices for ' + tsk_prfx + ' task from UCI ...'
+
+        for lnk in lnk_lst:
+            conn_ = urllib2.urlopen(lnk)
+            chld_lnk_lst = BeautifulSoup(conn_).find_all('a')
+            for chld_lnk in chld_lnk_lst:
+                chld_lnk = chld_lnk.get('href')
+                if chld_lnk.endswith('.data'):
+                    print 'Downloading ' + lnk + chld_lnk + ' ...'
+                    conn_ = urllib2.urlopen(lnk + chld_lnk)
+                    mtrx = conn_.read()
+                    out_fldr = 'data' + os.sep + tsk_prfx
+                    mtrx_fname = out_fldr + os.sep + chld_lnk
+                    with open(mtrx_fname, 'w+') as mxtrf:
+                        for line in mtrx.split('\n'):
+                            line = line.strip()
+                            if line != '':
+                                mxtrf.write(line + '\n')
+
+        print 'Data matrices fetched %.2f s.' % (time.time()-tic)
+
+### local constant for standalone execution
+DIV_BAR = '==================================================================='
 
 def main():
 
@@ -138,10 +152,15 @@ def main():
 
     """
 
+    uci_fetcher = UCIDataMatrixFetcher()
+
     for tsk_prfx in ['cla', 'reg']:
-        tsk_mtrx_url_lst = fetch_task_matrix_url_list(tsk_prfx)
-        data_folder_link_list = fetch_data_folder_links_list(tsk_mtrx_url_lst, tsk_prfx)
-        fetch_data(data_folder_link_list, tsk_prfx)
+        tsk_mtrx_url_lst = uci_fetcher.fetch_task_matrix_url_list(tsk_prfx)
+        data_folder_link_list = uci_fetcher.fetch_data_folder_links_list(
+            tsk_mtrx_url_lst,
+            tsk_prfx
+        )
+        uci_fetcher.fetch_data(data_folder_link_list, tsk_prfx)
 
 if __name__ == '__main__':
     main()

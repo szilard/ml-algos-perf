@@ -2,8 +2,9 @@
 """
 gen_results.py
 
-This script executes model files and concatenate their results into
-results.md.
+
+This script downloads UCI data matrices, executes model files, and concatenates
+their results into results.md.
 
 Contrinutors should run this script after adding (and testing) models in
 a model file to regenerate results.md with the new, contributed model's
@@ -16,6 +17,11 @@ extensions to commands on their machines.
 
 ### imports
 import os
+import time
+import UCIDataMatrixFetcher
+
+### constants
+DIV_BAR = '==================================================================='
 
 ### contributors edit dictionary below ########################################
 
@@ -39,6 +45,10 @@ def gen_tables_md(ext_cmd_dict, listing):
 
     """
 
+    tic = time.time()
+    print DIV_BAR
+    print 'Executing modeling files ...'
+
     ### loop through dirs in git repo
     ### execute appropriate model files
     for entry in listing:
@@ -54,6 +64,8 @@ def gen_tables_md(ext_cmd_dict, listing):
                 os.chdir(entry)
                 os.system(' '.join([cmd, model_fname]))
                 os.chdir('..')
+                
+    print 'Model files executed in %.2f s.' % (time.time()-tic)
 
 def concat_tables(listing):
 
@@ -64,7 +76,8 @@ def concat_tables(listing):
         listing: list of directories in git repo
 
     """
-    
+    tic = time.time()
+    print DIV_BAR
     print 'Concatenating results ...'
 
     ### conditionally delete and then open results.md file
@@ -89,17 +102,30 @@ def concat_tables(listing):
 
     res_md.close()
 
-    print 'Done.'
+    print 'Results concatenated in %.2f s.' % (time.time()-tic)
 
 def main():
 
-    """ Determines folders in git repo.
+    """ Downloads data matrices from UCI using UCIDataMatrixFetcher.
+        Determines folders in git repo.
         Generate results markdown table files by calling model files
             in gen_tables_md().
         Concatenates markdown table files in concat_tables().
 
     """
 
+    ### downlaod data 
+    uci_fetcher = UCIDataMatrixFetcher()
+
+    for tsk_prfx in ['cla', 'reg']:
+        tsk_mtrx_url_lst = uci_fetcher.fetch_task_matrix_url_list(tsk_prfx)
+        data_folder_link_list = uci_fetcher.fetch_data_folder_links_list(
+            tsk_mtrx_url_lst,
+            tsk_prfx
+        )
+        uci_fetcher.fetch_data(data_folder_link_list, tsk_prfx)
+
+    ### execute models and generate results    
     listing = os.listdir('.')
     gen_tables_md(EXT_CMD_DICT, listing)
     concat_tables(listing)
