@@ -147,7 +147,7 @@ DIV_BAR = '==================================================================='
 def main():
 
     """ For standalone execution or testing purposes.
-        For classification (cla) and regression (tasks),
+        For classification (cla) and regression (reg) tasks,
         fetch_task_matrix_url_list() determines data sets stored as matrices,
         fetch_data_folder_links_list() determines data folder urls,
         fetch_data() downloads data matrices stored as plain text.
