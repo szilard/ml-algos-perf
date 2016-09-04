@@ -53,7 +53,9 @@ UCI_REG_DATA_MATRIX_BLACK_LIST = ['auto-mpg.data',
                                   'o-ring-erosion-only.data',
                                   'o-ring-erosion-or-blowby.data',
                                   'Relation%20Network%20(Directed).data',
-                                  'Reaction%20Network%20(Undirected).data']
+                                  'Reaction%20Network%20(Undirected).data',
+                                  'wdbc.data',
+                                  'wpbc.data']
 
 class UCIDataMatrixFetcher(object):
 

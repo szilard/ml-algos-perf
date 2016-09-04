@@ -16,7 +16,6 @@ extensions to commands on their machines.
 
 ### imports
 import os
-import sys
 import time
 from UCIDataMatrixFetcher import UCIDataMatrixFetcher
 
@@ -40,17 +39,17 @@ def gen_tables_md(ext_cmd_dict, listing):
     from user contributed modeling scripts.
 
     Args:
-        ext_cmd_dict: Dictionary mapping file extensions to executable 
+        ext_cmd_dict: Dictionary mapping file extensions to executable
             commands.
         listing: List of directories in git repo.
-        
+
     Raises:
-        ValueError: Occurs when a dir in the repo containing model files is 
-            *not* named in this pattern: 
+        ValueError: Occurs when a dir in the repo containing model files is
+            *not* named in this pattern:
             <EXT_CMD_DICT key/file extension>_<library/package name>.
 
     """
-    
+
     ### loop through dirs in git repo
     ### execute appropriate model files
     for entry in listing:
@@ -79,8 +78,8 @@ def concat_tables(listing):
         listing: List of directories in git repo.
 
     Raises:
-        ValueError: Occurs when a dir in the repo containing model files is 
-            *not* named in this pattern: 
+        ValueError: Occurs when a dir in the repo containing model files is
+            *not* named in this pattern:
             EXT_CMD_DICT key/file extension>_<library/package name>.
 
     """

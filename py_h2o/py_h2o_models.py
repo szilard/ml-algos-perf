@@ -47,6 +47,9 @@ def run_cla_models():
 
     import h2o # install h2o: http://www.h2o.ai/download/h2o/choose
     h2o.init() # it may be necessary to start h2o outside of this script
+               # you can use max_mem_size_GB to increase available memory
+               # ex: h2o.init(max_mem_size_GB=<int>)
+    h2o.cluster_info()
 
     cla_dat_dir = (os.sep).join(['..', 'data', 'cla'])
     d_file_list = sorted([cla_dat_dir + os.sep + d_file for d_file in
@@ -140,6 +143,9 @@ def run_reg_models():
 
     import h2o # install h2o: http://www.h2o.ai/download/h2o/choose
     h2o.init() # it may be necessary to start h2o outside of this script
+               # you can use max_mem_size_GB to increase available memory
+               # ex: h2o.init(max_mem_size_GB=<int>)
+    h2o.cluster_info()
 
     reg_dat_dir = (os.sep).join(['..', 'data', 'reg'])
     d_file_list = sorted([reg_dat_dir + os.sep + d_file for d_file in
