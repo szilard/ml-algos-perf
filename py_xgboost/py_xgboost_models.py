@@ -33,7 +33,7 @@ def run_models():
     """ Contributors add h2o.ai models in this function.
 
     Returns:
-        models: list of all contributed modeling scripts results.
+        models: List of all contributed modeling scripts results.
 
     """
 
@@ -58,10 +58,10 @@ def gen_table_md(models, section_header, table_header_list, out_txt_fname):
     """ Generates markdown table containing results in output markdown file.
 
     Args:
-        models: list of individual model results
-        section_header: table title, second level header
-        table_header_list: names of attributes in table as a list of strings
-        out_txt_fname: determined name of output markdown file
+        models: List of individual model results.
+        section_header: Table title, second level header.
+        table_header_list: Names of attributes in table as a list of strings.
+        out_txt_fname: Determined name of output markdown file.
 
     """
 

@@ -16,10 +16,11 @@ extensions to commands on their machines.
 
 ### imports
 import os
+import sys
 import time
-import UCIDataMatrixFetcher
+from UCIDataMatrixFetcher import UCIDataMatrixFetcher
 
-### constants
+### global constants
 DIV_BAR = '==================================================================='
 
 ### contributors edit dictionary below ########################################
@@ -39,15 +40,17 @@ def gen_tables_md(ext_cmd_dict, listing):
     from user contributed modeling scripts.
 
     Args:
-        ext_cmd_dict: dictionary mapping file extensions to executable commands
-        listing: list of directories in git repo
+        ext_cmd_dict: Dictionary mapping file extensions to executable 
+            commands.
+        listing: List of directories in git repo.
+        
+    Raises:
+        ValueError: Occurs when a dir in the repo containing model files is 
+            *not* named in this pattern: 
+            <EXT_CMD_DICT key/file extension>_<library/package name>.
 
     """
-
-    tic = time.time()
-    print DIV_BAR
-    print 'Executing modeling files ...'
-
+    
     ### loop through dirs in git repo
     ### execute appropriate model files
     for entry in listing:
@@ -59,12 +62,13 @@ def gen_tables_md(ext_cmd_dict, listing):
             if ext != 'r': # will add R models later
                 model_fname = '.'.join([entry + '_models', ext])
                 cmd = ext_cmd_dict[ext]
+                tic = time.time()
+                print DIV_BAR
                 print 'Executing ' + ' '.join([cmd, model_fname]) + ' ...'
                 os.chdir(entry)
                 os.system(' '.join([cmd, model_fname]))
                 os.chdir('..')
-
-    print 'Model files executed in %.2f s.' % (time.time()-tic)
+                print 'Model files executed in %.2f s.' % (time.time()-tic)
 
 def concat_tables(listing):
 
@@ -72,7 +76,12 @@ def concat_tables(listing):
     into results.md.
 
     Args:
-        listing: list of directories in git repo
+        listing: List of directories in git repo.
+
+    Raises:
+        ValueError: Occurs when a dir in the repo containing model files is 
+            *not* named in this pattern: 
+            EXT_CMD_DICT key/file extension>_<library/package name>.
 
     """
     tic = time.time()
@@ -114,7 +123,7 @@ def main():
     """
 
     ### download data
-    uci_fetcher = UCIDataMatrixFetcher.UCIDataMatrixFetcher()
+    uci_fetcher = UCIDataMatrixFetcher()
     for tsk_prfx in ['cla', 'reg']:
         tsk_mtrx_url_lst = uci_fetcher.fetch_task_matrix_url_list(tsk_prfx)
         data_folder_link_list = uci_fetcher.fetch_data_folder_links_list(

@@ -27,29 +27,185 @@ regenerate results.md with the new, contributed model's results.
 import inspect
 import os
 import re
+import time
 
-def run_models():
+### global constants
+DIV_BAR = '==================================================================='
+SEED = 12345
 
-    """ Contributors add h2o.ai models in this function.
+def run_cla_models():
+
+    """ Contributors add h2o.ai classification models in this function.
 
     Returns:
-        models: list of all contributed modeling scripts results.
+        models: List of all contributed modeling scripts results.
 
     """
 
     ### list to contain all individual model results
     models = []
 
+    import h2o # install h2o: http://www.h2o.ai/download/h2o/choose
+    h2o.init() # it may be necessary to start h2o outside of this script
+
+    cla_dat_dir = (os.sep).join(['..', 'data', 'cla'])
+    d_file_list = sorted([cla_dat_dir + os.sep + d_file for d_file in
+                          os.listdir(cla_dat_dir) if d_file.endswith('.data')],
+                         key=str.lower)
+
+    for i, d_file in enumerate(d_file_list):
+
+        tic = time.time()
+        print DIV_BAR
+        print 'Modeling %s - Classification Task: (%d/%d) ...' %\
+            (d_file, i+1, len(d_file_list))
+
+        # import matrix
+        d_frame = h2o.import_file(d_file)
+
+        ### last column is usually target, but ...
+        ### first column can be target, id, or data
+        ### use simple rules below to determine
+        col1_y_matrices = ['CNAE-9.data',
+                           'letter-recognition.data',
+                           'meta.data',
+                           'parkinsons.data',
+                           'wine.data']
+
+        id_col_name = ''
+        y_name = ''
+
+        if d_file.split(os.sep)[-1] in col1_y_matrices:
+            y_name = d_frame.names[0]
+        else:
+            y_name = d_frame.names[-1]
+            col1_name = d_frame.names[0]
+            # check col1 for high cardinality
+            if d_frame.types[col1_name] not in ['real', 'time']:
+                col1_nlevels = d_frame[col1_name].asfactor().nlevels()[0]
+                if float(col1_nlevels)/float(d_frame.nrow) > 0.9:
+                    id_col_name = col1_name
+            # check if col1 is date
+            if id_col_name == '' and d_frame.types[col1_name] == 'time':
+                id_col_name = col1_name
+
+        ### specifiy modeling roles
+        print 'Target: ' + y_name + ' ...'
+        if id_col_name != '':
+            print 'Column 1 treated as date or row ID: ' + id_col_name + ' ...'
+        x_names = [n for n in d_frame.names if n not in [y_name, id_col_name]]
+
+        ### 70/30 partition into train and valid frames
+        tr_frame, v_frame = d_frame.split_frame([0.7], seed=SEED)
+        del d_frame
+
+        ### contributors add h2o regression models below ##################
+        # use tr_frame for training/CV
+        # use v_frame for validation, report assessment measures on v_frame
+        # use y_name for target
+        # use x_names for inputs
+
+        ### simple classification models using defaults on raw data
+
+
+
+        #######################################################################
+
+        del tr_frame, v_frame
+
+        print '%s modeled in %.2f s.' % (d_file, time.time()-tic)
+
     ### placeholder example
+
     example_model_results = ['model name', 'model description', 'data name',
                              'data description', 0.0, 0.0]
+
     models.append(example_model_results)
 
-    ### contributors add models below #########################################
+    h2o.cluster().shutdown()
+
+    return models
+
+def run_reg_models():
+
+    """ Contributors add h2o.ai regression models in this function.
+
+    Returns:
+        models: List of all contributed modeling scripts results.
+
+    """
+
+    ### list to contain all individual model results
+    models = []
+
+    import h2o # install h2o: http://www.h2o.ai/download/h2o/choose
+    h2o.init() # it may be necessary to start h2o outside of this script
+
+    reg_dat_dir = (os.sep).join(['..', 'data', 'reg'])
+    d_file_list = sorted([reg_dat_dir + os.sep + d_file for d_file in
+                          os.listdir(reg_dat_dir) if d_file.endswith('.data')],
+                         key=str.lower)
+
+    for i, d_file in enumerate(d_file_list):
+
+        tic = time.time()
+        print DIV_BAR
+        print 'Modeling %s - Regression Task: (%d/%d) ...' %\
+            (d_file, i+1, len(d_file_list))
+
+        # import matrix
+        d_frame = h2o.import_file(d_file)
+
+        ### last column is target, but ...
+        ### first column can be id
+        ### use simple rules below to determine
+        id_col_name = ''
+        y_name = ''
+        y_name = d_frame.names[-1]
+        col1_name = d_frame.names[0]
+        # check col1 for high cardinality
+        if d_frame.types[col1_name] not in ['real', 'time']:
+            col1_nlevels = d_frame[col1_name].asfactor().nlevels()[0]
+            if float(col1_nlevels)/float(d_frame.nrow) > 0.9:
+                id_col_name = col1_name
+        # check if col1 is date
+        if id_col_name == '' and d_frame.types[col1_name] == 'time':
+            id_col_name = col1_name
+
+        ### specifiy modeling roles
+        print 'Target: ' + y_name + ' ...'
+        if id_col_name != '':
+            print 'Column 1 treated as date or row ID: ' + id_col_name + ' ...'
+        x_names = [n for n in d_frame.names if n not in [y_name, id_col_name]]
+
+        ### 70/30 partition into train and valid frames
+        tr_frame, v_frame = d_frame.split_frame([0.7], seed=SEED)
+        del d_frame
+
+        ### contributors add h2o regression models below ##################
+        # use tr_frame for training/CV
+        # use v_frame for validation, report assessment measures on v_frame
+        # use y_name for target
+        # use x_names for inputs
+
+        ### simple regression models using defaults on raw data
 
 
 
-    ###########################################################################
+        #######################################################################
+
+        del tr_frame, v_frame
+
+        print '%s modeled in %.2f s.' % (d_file, time.time()-tic)
+
+    ### placeholder example
+
+    example_model_results = ['model name', 'model description', 'data name',
+                             'data description', 0.0, 0.0]
+
+    models.append(example_model_results)
+
+    h2o.cluster().shutdown()
 
     return models
 
@@ -58,10 +214,10 @@ def gen_table_md(models, section_header, table_header_list, out_txt_fname):
     """ Generates markdown table containing results in output markdown file.
 
     Args:
-        models: list of individual model results
-        section_header: table title, second level header
-        table_header_list: names of attributes in table as a list of strings
-        out_txt_fname: determined name of output markdown file
+        models: List of individual model results.
+        section_header: Table title, second level header.
+        table_header_list: Names of attributes in table as a list of strings.
+        out_txt_fname: Determined name of output markdown file.
 
     """
 
@@ -88,7 +244,7 @@ def gen_table_md(models, section_header, table_header_list, out_txt_fname):
 def main():
 
     """ Determines output markdown filename from current filename.
-        Executes contributed model scripts in run_models().
+        Executes contributed model scripts in run_*_models().
         Generates results markdown file in gen_table_md().
 
     """
@@ -105,7 +261,9 @@ def main():
     out_txt_fname = current_fname_prefix + '.txt'
 
     # run benchmark models
-    models = run_models()
+    models = []
+    models.append(run_cla_models())
+    models.append(run_reg_models())
 
     # generate markdown
     gen_table_md(models, section_header, table_header_list, out_txt_fname)
