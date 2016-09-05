@@ -42,7 +42,8 @@ UCI_CLA_DATA_MATRIX_BLACK_LIST = ['audiology.data',
                                   'Relation%20Network%20(Directed).data',
                                   'secom.data',
                                   'secom_labels.data',
-                                  'splice.data', 'segmentation.data',
+                                  'splice.data',
+                                  'segmentation.data',
                                   'synthetic_control.data',
                                   'trains-original.data',
                                   'wdbc.data',
@@ -50,6 +51,7 @@ UCI_CLA_DATA_MATRIX_BLACK_LIST = ['audiology.data',
 
 UCI_REG_DATA_MATRIX_BLACK_LIST = ['auto-mpg.data',
                                   'breast-cancer-wisconsin.data',
+                                  'communities.data',
                                   'o-ring-erosion-only.data',
                                   'o-ring-erosion-or-blowby.data',
                                   'Relation%20Network%20(Directed).data',
@@ -219,6 +221,10 @@ class UCIDataMatrixFetcher(object):
                         for line in mtrx.split('\n'):
                             line = line.strip()
                             if line != '':
+                                # standardize missing values
+                                line = line.replace('?', 'NA')
+                                line = line.replace(' -', ' NA')
+                                line = line.replace(',*', ',NA')
                                 mxtrf.write(line + '\n')
 
         print 'Data matrices fetched %.2f s.' % (time.time()-tic)
