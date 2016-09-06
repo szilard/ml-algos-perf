@@ -11,11 +11,12 @@ must be placed in a function that returns a list with the following elements:
 * model name
 * model description
 * data name
-* data description
-* performance
+* N
+* p
+* relavent performance metrics
 
 This resulting list should be appended to the models list. The results in the
-models list will be described automatically with a table and plot(s) in the
+models list will be described automatically with a table (and plot(s)?) in the
 main repo results.md file.
 
 Run the gen_results.py script after adding models to this file (and testing
@@ -28,32 +29,52 @@ import inspect
 import os
 import re
 import time
+import h2o # install h2o: http://www.h2o.ai/download/h2o/choose
+from h2o.estimators.gbm import H2OGradientBoostingEstimator
+from h2o.estimators.deeplearning import H2ODeepLearningEstimator
+from h2o.estimators.random_forest import H2ORandomForestEstimator
+from h2o.grid.grid_search import H2OGridSearch
 
 ### global constants
 DIV_BAR = '==================================================================='
 SEED = 12345
 
+# TODO: Reduce code replication 
+# TODO: Write results to pandas dfs - not lists
+# TODO: Aggregate results by algo
+# TODO: Function for writing pandas dfs to md tables
+# TODO: Function for plots 
+# TODO: Linear, logistic regression
+# TODO: Naive Bayes?
+
 ### contributors add model functions here #####################################
 
-def example_model(frames, y_name, x_names):
 
-    """ Placeholder example model function.
+
+###############################################################################
+
+def cla_randomsearch_gbm(frames, y_name, x_names, dname):
+
+    """ H2o GBM with parameter tuning
 
     Args:
         frames[0], h2o training frame.
         frames[1], h2o validation frame.
         y_name: Target name.
         x_names: List of input names.
+        dname: Name of data file.
 
     Returns:
-        List of modeling results, for example
-        ['model name', 'model description', 'data name', 'data description',
-         0.0, 0.0]
+        List of modeling results:
 
     """
 
-    tr_frame = frames[0]
-    v_frame = frames[1]
+    ### basic descriptors
+    mname = 'GBM'
+    mdesc = 'GBM w/ random hyperparameter search'
+
+    ### assign partitions
+    tr_frame, v_frame = frames[0], frames[1]
 
     ### impute numeric
     ### categorical 'NA' treated as valid level
@@ -64,12 +85,384 @@ def example_model(frames, y_name, x_names):
     tr_frame = h2o_stdize(tr_frame, y_name, x_names)
     v_frame = h2o_stdize(v_frame, y_name, x_names)
 
-    example_model_results = ['model name', 'model description', 'data name',
-                             'data description', 0.0, 0.0]
+    ### define random grid search parameters
+    ntrees_opt = range(0, 100, 1)
+    max_depth_opt = range(0, 20, 1)
+    sample_rate_opt = [s/float(10) for s in range(1, 11)]
+    col_sample_rate_opt = [s/float(10) for s in range(1, 11)]
 
-    return example_model_results
+    hyper_parameters = {"ntrees":ntrees_opt,
+                        "max_depth":max_depth_opt,
+                        "sample_rate":sample_rate_opt,
+                        "col_sample_rate":col_sample_rate_opt}
 
-###############################################################################
+    search_criteria = {"strategy":"RandomDiscrete",
+                       "max_models":20,
+                       "max_runtime_secs":600,
+                       "seed":SEED}
+
+    gsearch = H2OGridSearch(H2OGradientBoostingEstimator,
+                            hyper_params=hyper_parameters,
+                            search_criteria=search_criteria)
+
+    ### execute training w/ grid search
+    gsearch.train(x=x_names,
+                  y=y_name,
+                  training_frame=tr_frame,
+                  validation_frame=v_frame
+                 )
+
+    ### retrieve best model
+    bst_logl_model_id = gsearch.sort_by('logloss(valid=True)', False)\
+                                ['Model Id'][0]
+    bst_logl_model = h2o.get_model(bst_logl_model_id)
+
+    ### collect validation error measures (w/ reasonable precision)
+    logloss = '%.3f' % bst_logl_model.logloss(valid=True)
+    rmse = '%.3f' % bst_logl_model.rmse(valid=True)
+    if tr_frame[y_name].nlevels()[0] > 2: # multinomial
+        acc = '%.3f' % bst_logl_model.confusion_matrix(v_frame)['Error'][-1]
+    else: # binary
+        acc = '%.3f' % bst_logl_model.accuracy(thresholds=[0.5],
+                                               valid=True)[0][-1]
+
+    return [mname, mdesc, dname, tr_frame.nrow, len(x_names), logloss, rmse,\
+            acc]
+
+def cla_earlystop_rf(frames, y_name, x_names, dname):
+
+    """ H2o RF with early stopping
+
+    Args:
+        frames[0], h2o training frame.
+        frames[1], h2o validation frame.
+        y_name: Target name.
+        x_names: List of input names.
+        dname: Name of data file.
+
+    Returns:
+        List of modeling results:
+
+    """
+
+    ### basic descriptors
+    mname = 'RF'
+    mdesc = 'RF w/ early stopping'
+
+    ### assign partitions
+    tr_frame, v_frame = frames[0], frames[1]
+
+    ### impute numeric
+    ### categorical 'NA' treated as valid level
+    tr_frame.impute(method='mean')
+    v_frame.impute(method='mean')
+
+    ### stdize
+    tr_frame = h2o_stdize(tr_frame, y_name, x_names)
+    v_frame = h2o_stdize(v_frame, y_name, x_names)
+
+    ### specify rf model
+    rf_model = H2ORandomForestEstimator(
+        ntrees=200,
+        max_depth=30,
+        stopping_rounds=2,
+        stopping_tolerance=0.01,
+        score_each_iteration=True,
+        seed=SEED
+       )
+        
+    ### train rf model
+    rf_model.train(x=x_names,
+                   y=y_name,
+                   training_frame=tr_frame,
+                   validation_frame=v_frame
+                  )
+
+    ### collect validation error measures (w/ reasonable precision)
+    logloss = '%.3f' % rf_model.logloss(valid=True)
+    rmse = '%.3f' % rf_model.rmse(valid=True)
+    if tr_frame[y_name].nlevels()[0] > 2: # multinomial
+        acc = '%.3f' % rf_model.confusion_matrix(v_frame)['Error'][-1]
+    else: # binary
+        acc = '%.3f' % rf_model.accuracy(thresholds=[0.5],
+                                               valid=True)[0][-1]
+
+    return [mname, mdesc, dname, tr_frame.nrow, len(x_names), logloss, rmse,\
+            acc]
+
+def cla_randomsearch_nn(frames, y_name, x_names, dname):
+
+    """ H2o neural network with parameter tuning
+
+    Args:
+        frames[0], h2o training frame.
+        frames[1], h2o validation frame.
+        y_name: Target name.
+        x_names: List of input names.
+        dname: Name of data file.
+
+    Returns:
+        List of modeling results:
+
+    """
+
+    ### basic descriptors
+    mname = 'NN'
+    mdesc = 'NN w/ random hyperparameter search'
+
+    ### assign partitions
+    tr_frame, v_frame = frames[0], frames[1]
+
+    ### impute numeric
+    ### categorical 'NA' treated as valid level
+    tr_frame.impute(method='mean')
+    v_frame.impute(method='mean')
+
+    ### stdize
+    tr_frame = h2o_stdize(tr_frame, y_name, x_names)
+    v_frame = h2o_stdize(v_frame, y_name, x_names)
+
+    ### define random grid search parameters
+    hidden_opt = [[17, 32], [8, 19], [32, 16, 8], [100], [10, 10, 10, 10]]
+    l1_opt = [s/1e6 for s in range(1, 1001)]
+    l2_opt = [s/1e4 for s in range(1, 101)]
+    input_dropout_ratio_opt = [s/1e2 for s in range(1, 21)]    
+
+    hyper_parameters = {"hidden":hidden_opt,
+                        "l1":l1_opt,
+                        "l2":l2_opt,
+                        "input_dropout_ratio":input_dropout_ratio_opt}
+
+    search_criteria = {"strategy":"RandomDiscrete",
+                       "max_models":20,
+                       "max_runtime_secs":600,
+                       "seed":SEED}
+
+    gsearch = H2OGridSearch(H2ODeepLearningEstimator,
+                            hyper_params=hyper_parameters,
+                            search_criteria=search_criteria)
+
+    ### execute training w/ grid search
+    gsearch.train(x=x_names,
+                  y=y_name,
+                  training_frame=tr_frame,
+                  validation_frame=v_frame
+                 )
+
+    ### retrieve best model
+    bst_logl_model_id = gsearch.sort_by('logloss(valid=True)', False)\
+                                ['Model Id'][0]
+    bst_logl_model = h2o.get_model(bst_logl_model_id)
+
+    ### collect validation error measures (w/ reasonable precision)
+    logloss = '%.3f' % bst_logl_model.logloss(valid=True)
+    rmse = '%.3f' % bst_logl_model.rmse(valid=True)
+    if tr_frame[y_name].nlevels()[0] > 2: # multinomial
+        acc = '%.3f' % bst_logl_model.confusion_matrix(v_frame)['Error'][-1]
+    else: # binary
+        acc = '%.3f' % bst_logl_model.accuracy(thresholds=[0.5],
+                                               valid=True)[0][-1]
+
+    return [mname, mdesc, dname, tr_frame.nrow, len(x_names), logloss, rmse,\
+            acc]
+
+def reg_randomsearch_gbm(frames, y_name, x_names, dname):
+
+    """ H2o GBM with parameter tuning
+
+    Args:
+        frames[0], h2o training frame.
+        frames[1], h2o validation frame.
+        y_name: Target name.
+        x_names: List of input names.
+        dname: Name of data file.
+
+    Returns:
+        List of modeling results:
+
+    """
+
+    ### basic descriptors
+    mname = 'GBM'
+    mdesc = 'GBM w/ random hyperparameter search'
+
+    ### assign partitions
+    tr_frame, v_frame = frames[0], frames[1]
+
+    ### impute numeric
+    ### categorical 'NA' treated as valid level
+    tr_frame.impute(method='mean')
+    v_frame.impute(method='mean')
+
+    ### stdize
+    tr_frame = h2o_stdize(tr_frame, y_name, x_names)
+    v_frame = h2o_stdize(v_frame, y_name, x_names)
+
+    ### define random grid search parameters
+    ntrees_opt = range(0, 100, 1)
+    max_depth_opt = range(0, 20, 1)
+    sample_rate_opt = [s/float(10) for s in range(1, 11)]
+    col_sample_rate_opt = [s/float(10) for s in range(1, 11)]
+
+    hyper_parameters = {"ntrees":ntrees_opt,
+                        "max_depth":max_depth_opt,
+                        "sample_rate":sample_rate_opt,
+                        "col_sample_rate":col_sample_rate_opt}
+
+    search_criteria = {"strategy":"RandomDiscrete",
+                       "max_models":20,
+                       "max_runtime_secs":600,
+                       "seed":SEED}
+
+    gsearch = H2OGridSearch(H2OGradientBoostingEstimator,
+                            hyper_params=hyper_parameters,
+                            search_criteria=search_criteria)
+
+    ### execute training w/ grid search
+    gsearch.train(x=x_names,
+                  y=y_name,
+                  training_frame=tr_frame,
+                  validation_frame=v_frame
+                 )
+
+    ### retrieve best model
+    bst_rd_model_id = gsearch.sort_by('residual_deviance(valid=True)', False)\
+                         ['Model Id'][0]
+    bst_rd_model = h2o.get_model(bst_rd_model_id)
+
+    ### collect validation error measures (w/ reasonable precision)
+    mrd = '%.3f' % bst_rd_model.mean_residual_deviance(valid=True)
+    rmse = '%.3f' % bst_rd_model.rmse(valid=True)
+    r2_ = '%.3f' % bst_rd_model.r2(valid=True)
+
+    return [mname, mdesc, dname, tr_frame.nrow, len(x_names), mrd, rmse, r2_]
+
+def reg_earlystop_rf(frames, y_name, x_names, dname):
+
+    """ H2o RF with early stopping
+
+    Args:
+        frames[0], h2o training frame.
+        frames[1], h2o validation frame.
+        y_name: Target name.
+        x_names: List of input names.
+        dname: Name of data file.
+
+    Returns:
+        List of modeling results:
+
+    """
+
+    ### basic descriptors
+    mname = 'RF'
+    mdesc = 'RF w/ early stopping'
+
+    ### assign partitions
+    tr_frame, v_frame = frames[0], frames[1]
+
+    ### impute numeric
+    ### categorical 'NA' treated as valid level
+    tr_frame.impute(method='mean')
+    v_frame.impute(method='mean')
+
+    ### stdize
+    tr_frame = h2o_stdize(tr_frame, y_name, x_names)
+    v_frame = h2o_stdize(v_frame, y_name, x_names)
+
+    ### specify rf model
+    rf_model = H2ORandomForestEstimator(
+        ntrees=200,
+        max_depth=30,
+        stopping_rounds=2,
+        stopping_tolerance=0.01,
+        score_each_iteration=True,
+        seed=SEED
+       )
+        
+    ### train rf model
+    rf_model.train(x=x_names,
+                   y=y_name,
+                   training_frame=tr_frame,
+                   validation_frame=v_frame
+                  )
+                  
+
+    ### collect validation error measures (w/ reasonable precision)
+    mrd = '%.3f' % rf_model.mean_residual_deviance(valid=True)
+    rmse = '%.3f' % rf_model.rmse(valid=True)
+    r2_ = '%.3f' % rf_model.r2(valid=True)
+
+    return [mname, mdesc, dname, tr_frame.nrow, len(x_names), mrd, rmse, r2_]
+    
+def reg_randomsearch_nn(frames, y_name, x_names, dname):
+
+    """ H2o neural network with parameter tuning
+
+    Args:
+        frames[0], h2o training frame.
+        frames[1], h2o validation frame.
+        y_name: Target name.
+        x_names: List of input names.
+        dname: Name of data file.
+
+    Returns:
+        List of modeling results:
+
+    """
+    ### basic descriptors
+    mname = 'NN'
+    mdesc = 'NN w/ random hyperparameter search'
+
+    ### assign partitions
+    tr_frame, v_frame = frames[0], frames[1]
+
+    ### impute numeric
+    ### categorical 'NA' treated as valid level
+    tr_frame.impute(method='mean')
+    v_frame.impute(method='mean')
+
+    ### stdize
+    tr_frame = h2o_stdize(tr_frame, y_name, x_names)
+    v_frame = h2o_stdize(v_frame, y_name, x_names)
+
+    ### define random grid search parameters
+    hidden_opt = [[17, 32], [8, 19], [32, 16, 8], [100], [10, 10, 10, 10]]
+    l1_opt = [s/1e6 for s in range(1, 1001)]
+    l2_opt = [s/1e4 for s in range(1, 101)]
+    input_dropout_ratio_opt = [s/1e2 for s in range(1, 21)]    
+
+    hyper_parameters = {"hidden":hidden_opt,
+                        "l1":l1_opt,
+                        "l2":l2_opt,
+                        "input_dropout_ratio":input_dropout_ratio_opt}
+
+    search_criteria = {"strategy":"RandomDiscrete",
+                       "max_models":20,
+                       "max_runtime_secs":600,
+                       "seed":SEED}
+
+    gsearch = H2OGridSearch(H2ODeepLearningEstimator,
+                            hyper_params=hyper_parameters,
+                            search_criteria=search_criteria)
+
+    ### execute training w/ grid search
+    gsearch.train(x=x_names,
+                  y=y_name,
+                  training_frame=tr_frame,
+                  validation_frame=v_frame
+                 )
+                 
+    ### retrieve best model
+    bst_rd_model_id = gsearch.sort_by('residual_deviance(valid=True)', False)\
+                         ['Model Id'][0]
+    bst_rd_model = h2o.get_model(bst_rd_model_id)
+
+    ### collect validation error measures (w/ reasonable precision)
+    mrd = '%.3f' % bst_rd_model.mean_residual_deviance(valid=True)
+    rmse = '%.3f' % bst_rd_model.rmse(valid=True)
+    r2_ = '%.3f' % bst_rd_model.r2(valid=True)
+
+    return [mname, mdesc, dname, tr_frame.nrow, len(x_names), mrd, rmse, r2_]
 
 def h2o_stdize(frame, y_name, x_names):
 
@@ -95,7 +488,8 @@ def h2o_stdize(frame, y_name, x_names):
                        numeric_x_names_bool_list[i]]
 
     # stdize numeric inputs
-    frame[numeric_x_names] = frame[numeric_x_names].scale()
+    if len(numeric_x_names) > 0:
+        frame[numeric_x_names] = frame[numeric_x_names].scale()
 
     return frame
 
@@ -141,12 +535,6 @@ def run_cla_models():
     ### list to contain all contributed model results
     models = []
 
-    import h2o # install h2o: http://www.h2o.ai/download/h2o/choose
-    h2o.init() # it may be necessary to start h2o outside of this script
-               # you can use max_mem_size_GB here to increase available memory
-               # ex: h2o.init(max_mem_size_GB=<int>)
-    h2o.cluster().show_status()
-
     ### specify classification task dir and data matrices
     cla_dat_dir = (os.sep).join(['..', 'data', 'cla'])
     d_file_list = sorted([cla_dat_dir + os.sep + d_file for d_file in
@@ -176,7 +564,8 @@ def run_cla_models():
         id_col_name = ''
         y_name = ''
 
-        if d_file.split(os.sep)[-1] in col1_y_matrices:
+        dname = d_file.split(os.sep)[-1]
+        if dname in col1_y_matrices:
             y_name = d_frame.names[0]
         else:
             y_name = d_frame.names[-1]
@@ -193,17 +582,23 @@ def run_cla_models():
                   [y_name, id_col_name]]
 
         ### 70/30 partition into train and valid frames
-        d_frames = d_frame.split_frame([0.7], seed=SEED)
+        frames = d_frame.split_frame([0.7], seed=SEED)
         del d_frame
 
         ### call model functions
-        models.append(example_model(d_frames, y_name, x_names))
+        try:
+            models.append(cla_randomsearch_gbm(frames, y_name, x_names,
+                                               dname))
+            models.append(cla_earlystop_rf(frames, y_name, x_names,
+                                              dname))                                               
+            models.append(cla_randomsearch_nn(frames, y_name, x_names,
+                                              dname))  
+        except ValueError:
+            print 'Warning: Model training failure.'
 
-        del d_frames
+        del frames
 
         print '%s modeled in %.2f s.' % (d_file, time.time()-tic)
-
-    h2o.cluster().shutdown()
 
     return models
 
@@ -218,12 +613,6 @@ def run_reg_models():
 
     ### list to contain all individual model results
     models = []
-
-    import h2o # install h2o: http://www.h2o.ai/download/h2o/choose
-    h2o.init() # it may be necessary to start h2o outside of this script
-               # you can use max_mem_size_GB to increase available memory
-               # ex: h2o.init(max_mem_size_GB=<int>)
-    h2o.cluster().show_status()
 
     ### specify regression task dir and data matrices
     reg_dat_dir = (os.sep).join(['..', 'data', 'reg'])
@@ -264,13 +653,19 @@ def run_reg_models():
         del d_frame
 
         ### call model functions
-        models.append(example_model(frames, y_name, x_names))
+        try:
+            models.append(reg_randomsearch_gbm(frames, y_name, x_names,
+                                               d_file.split(os.sep)[-1]))
+            models.append(reg_earlystop_rf(frames, y_name, x_names,
+                                           d_file.split(os.sep)[-1]))                                                
+            models.append(reg_randomsearch_nn(frames, y_name, x_names,
+                                              d_file.split(os.sep)[-1]))
+        except ValueError:
+            print 'Warning: Model training failure.'
 
         del frames
 
         print '%s modeled in %.2f s.' % (d_file, time.time()-tic)
-
-    h2o.cluster().shutdown()
 
     return models
 
@@ -322,23 +717,27 @@ def main():
     current_fname_prefix = current_path[-1].split('.')[0]
     out_txt_fname = current_fname_prefix + '.txt'
 
+    h2o.init(max_mem_size_GB=12) # it may be necessary to start h2o outside of this script
+               # you can use max_mem_size_GB to increase available memory
+               # ex: h2o.init(max_mem_size_GB=<int>)
+    h2o.cluster().show_status()
+
     ### run benchmark models
-    ### extends prevents another level of nesting
     cla_models = run_cla_models()
     reg_models = run_reg_models()
+
+    h2o.cluster().shutdown()
 
     ### generate markdown
     cla_section_header = 'Python H20.ai Classification Models'
     table_header_list = ['Model Name', 'Model Description', 'Data Name',
-                         'Data Description', 'Performance Metric 1',
-                         'Performance Metric 2']
+                         'N', 'p', 'Logloss', 'RMSE', 'Accuracy']
     gen_table_md(cla_models, cla_section_header, table_header_list,
                  out_txt_fname, 'w+')
 
     reg_section_header = 'Python H20.ai Regression Models'
     table_header_list = ['Model Name', 'Model Description', 'Data Name',
-                         'Data Description', 'Performance Metric 1',
-                         'Performance Metric 2']
+                         'N', 'p', 'Mean Residual Deviance', 'RMSE', 'R2']
     gen_table_md(reg_models, reg_section_header, table_header_list,
                  out_txt_fname, 'a+')
 

@@ -67,7 +67,7 @@ def gen_tables_md(ext_cmd_dict, listing):
                 os.chdir(entry)
                 os.system(' '.join([cmd, model_fname]))
                 os.chdir('..')
-                print 'Model files executed in %.2f s.' % (time.time()-tic)
+                print 'Model file executed in %.2f s.' % (time.time()-tic)
 
 def concat_tables(listing):
 
