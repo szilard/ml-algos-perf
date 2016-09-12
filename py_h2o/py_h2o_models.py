@@ -30,6 +30,10 @@ import os
 import re
 import time
 import h2o # install h2o: http://www.h2o.ai/download/h2o/choose
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.style.use('ggplot')
 from h2o.estimators.gbm import H2OGradientBoostingEstimator
 from h2o.estimators.deeplearning import H2ODeepLearningEstimator
 from h2o.estimators.random_forest import H2ORandomForestEstimator
@@ -40,10 +44,6 @@ DIV_BAR = '==================================================================='
 SEED = 12345
 
 # TODO: Reduce code replication 
-# TODO: Write results to pandas dfs - not lists
-# TODO: Aggregate results by algo
-# TODO: Function for writing pandas dfs to md tables
-# TODO: Function for plots 
 # TODO: Linear, logistic regression
 # TODO: Naive Bayes?
 
@@ -669,13 +669,12 @@ def run_reg_models():
 
     return models
 
-def gen_table_md(models, section_header, table_header_list, out_txt_fname,
-                 write_mode):
+def gen_table_md(models, section_header, out_txt_fname, write_mode):
 
     """ Generates markdown table containing results in output markdown file.
 
     Args:
-        models: List of individual model results.
+        models: pandas df of individual model results.
         section_header: Table title, second level header.
         table_header_list: Names of attributes in table as a list of strings.
         out_txt_fname: Determined name of output markdown file.
@@ -690,20 +689,37 @@ def gen_table_md(models, section_header, table_header_list, out_txt_fname,
     out.write(section_header + '\n')
 
     # write table header markdown
-    num_table_attrs = len(table_header_list)
-    out.write(' | '.join(table_header_list) + '\n')
+    num_table_attrs = len(models.columns)
+    out.write(' | '.join(models.columns) + '\n')
     out.write(' | '.join(['---' for _ in range(0, num_table_attrs)]) + '\n')
 
     # write model attributes
-    for model in models:
-        out.write(' | '.join([str(attr) for attr in model]) + '\n')
+    for i in models.index:
+        out.write(' | '.join([str(j) for j in list(models.loc[i,\
+                                                              models.columns])\
+                             ]) + '\n')
 
-    # seperate classification and regression models
-    if write_mode == 'w+':
-        out.write('\n')
-
+    out.write('\n')
     out.close()
 
+def gen_plot_md(section_header, out_txt_fname, current_path, out_plot_fname,\
+                write_mode):
+    
+    # conditional delete/open markdown file
+    out = open(out_txt_fname, write_mode)
+    
+    # write section header markdown
+    section_header = '## ' + section_header
+    out.write(section_header + '\n')
+    
+    # reference image
+    out_plot_fname = out_plot_fname + '.png'
+    git_sub_dir = current_path[-2]
+    out.write('![alt text](' + str(git_sub_dir + '/' + out_plot_fname) + ')\n')
+        
+    out.write('\n')
+    out.close()
+    
 def main():
 
     """ Determines output markdown filename from current filename.
@@ -728,18 +744,154 @@ def main():
 
     h2o.cluster().shutdown()
 
-    ### generate markdown
-    cla_section_header = 'Python H20.ai Classification Models'
+    ### create pandas dfs
     table_header_list = ['Model Name', 'Model Description', 'Data Name',
                          'N', 'p', 'Logloss', 'RMSE', 'Accuracy']
-    gen_table_md(cla_models, cla_section_header, table_header_list,
-                 out_txt_fname, 'w+')
+    cla_models_df = pd.DataFrame(cla_models, columns=table_header_list)    
+    
+    cla_sum_df = cla_models_df.drop(['Model Description', 'Data Name','N',
+                                       'p'], axis=1)
+    cla_sum_df = cla_sum_df.apply(pd.to_numeric, errors='ignore')\
+                           .groupby('Model Name', as_index=False).mean()                                  
 
-    reg_section_header = 'Python H20.ai Regression Models'
     table_header_list = ['Model Name', 'Model Description', 'Data Name',
                          'N', 'p', 'Mean Residual Deviance', 'RMSE', 'R2']
-    gen_table_md(reg_models, reg_section_header, table_header_list,
-                 out_txt_fname, 'a+')
+    reg_models_df = pd.DataFrame(reg_models, columns=table_header_list)    
+
+    reg_sum_df = reg_models_df.drop(['Model Description', 'Data Name','N',\
+                                       'p',], axis=1)
+
+    reg_sum_df = reg_sum_df.apply(pd.to_numeric, errors='ignore')\
+                           .groupby('Model Name', as_index=False).mean()   
+
+    ### create pandas/matplotlib figures
+
+    ### cla bar
+    bar_plot_df = cla_models_df.drop(['Model Description', 'N', 'p',\
+                                      'Logloss', 'RMSE'], axis=1)
+    bar_plot_df = bar_plot_df.sort_values(by=['Data Name', 'Accuracy']\
+                                          , ascending=[True, False])\
+                                          .groupby('Data Name').head(1)
+                                   
+    bar_plot_df['Count'] = 0
+    bar_plot_df = bar_plot_df.drop(['Data Name', 'Accuracy'], axis=1)\
+                                  .groupby('Model Name', as_index=False)\
+                                  .count()
+                                  
+    bar_plot = bar_plot_df.plot.bar(x='Model Name', y='Count',\
+                                    color=['r', 'b', 'g'], legend=False)
+    bar_plot.set_ylabel('Count')
+    fig = bar_plot.get_figure()
+    fig.savefig('cla_bar_plot')
+
+    ### cla scatter
+    scatter_plot_df = cla_models_df.drop(['Model Description', 'Logloss',\
+                                          'RMSE'], axis=1)
+    scatter_plot_df = scatter_plot_df.sort_values(by=['Data Name', 'Accuracy']\
+                                                  , ascending=[True, False])\
+                                                  .groupby('Data Name').head(1)
+                                            
+    scatter_plot_df = scatter_plot_df.drop(['Data Name', 'Accuracy'], axis=1)   
+    
+    groups = scatter_plot_df.groupby('Model Name')
+    fig, ax = plt.subplots()
+    ax.margins(0.05)
+    xlim_ = scatter_plot_df['N'].max()
+    ylim_ = scatter_plot_df['p'].max()
+    for name, group in groups:
+        ax.plot(group.N, group.p, marker='o', linestyle='', ms=10, label=name)
+        plt.xlim(0, xlim_)
+        plt.ylim(0, ylim_)
+    ax.legend(loc=4)
+    fig.savefig('cla_scatter_plot')
+
+    ### reg bar
+    bar_plot_df = reg_models_df.drop(['Model Description', 'N', 'p',\
+                                      'Mean Residual Deviance', 'RMSE'],\
+                                      axis=1)
+    bar_plot_df = bar_plot_df.sort_values(by=['Data Name', 'R2']\
+                                          , ascending=[True, False])\
+                                          .groupby('Data Name').head(1)
+                                   
+    bar_plot_df['Count'] = 0
+    bar_plot_df = bar_plot_df.drop(['Data Name', 'R2'], axis=1)\
+                                  .groupby('Model Name', as_index=False)\
+                                  .count()
+                                  
+    bar_plot = bar_plot_df.plot.bar(x='Model Name', y='Count',\
+                                    color=['r', 'b', 'g'], legend=False)
+    bar_plot.set_ylabel('Count')
+    fig = bar_plot.get_figure()
+    fig.savefig('reg_bar_plot')
+
+    ### reg scatter 
+    scatter_plot_df = reg_models_df.drop(['Model Description',\
+                                          'Mean Residual Deviance', 'RMSE'],\
+                                          axis=1)
+    scatter_plot_df = scatter_plot_df.sort_values(by=['Data Name', 'R2']\
+                                                  , ascending=[True, False])\
+                                                  .groupby('Data Name').head(1)
+                                            
+    scatter_plot_df = scatter_plot_df.drop(['Data Name', 'R2'], axis=1)   
+    
+    groups = scatter_plot_df.groupby('Model Name')
+    fig, ax = plt.subplots()
+    ax.margins(0.05)
+    xlim_ = scatter_plot_df['N'].max()
+    ylim_ = scatter_plot_df['p'].max()
+    for name, group in groups:
+        ax.plot(group.N, group.p, marker='o', linestyle='', ms=12, label=name)
+        plt.xlim(0, xlim_)
+        plt.ylim(0, ylim_)
+    ax.legend(loc=4)
+    fig.savefig('reg_scatter_plot')
+
+                                       
+    ### generate markdown
+    gen_table_md(cla_models_df, 
+                 'Python H20.ai Classification Models', 
+                 out_txt_fname, 
+                 'w+')
+
+    gen_table_md(cla_sum_df, 
+                 'Python H20.ai Classification Models Summary by Model', 
+                 out_txt_fname, 
+                 'a+')    
+
+    gen_plot_md('Count of Best Models', 
+                out_txt_fname, 
+                current_path, 
+                'cla_bar_plot',
+                'a+')
+                
+    gen_plot_md('Best Models by N and p', 
+                out_txt_fname, 
+                current_path, 
+                'cla_scatter_plot',
+                'a+')
+
+    gen_table_md(reg_models_df, 
+                 'Python H20.ai Regression Models', 
+                 out_txt_fname, 
+                 'a+')
+
+    gen_table_md(reg_sum_df, 
+                 'Python H20.ai Regression Models Summary by Model', 
+                 out_txt_fname, 
+                 'a+')  
+
+    gen_plot_md('Count of Best Models', 
+                out_txt_fname, 
+                current_path, 
+                'reg_bar_plot',
+                'a+')
+                
+    gen_plot_md('Best Models by N and p', 
+                out_txt_fname, 
+                current_path, 
+                'reg_scatter_plot',
+                'a+')
+
 
 if __name__ == '__main__':
     main()
