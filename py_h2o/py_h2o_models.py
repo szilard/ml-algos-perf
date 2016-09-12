@@ -43,13 +43,16 @@ from h2o.grid.grid_search import H2OGridSearch
 DIV_BAR = '==================================================================='
 SEED = 12345
 
-# TODO: Reduce code replication 
+# TODO: Make code less terrible
 # TODO: Linear, logistic regression
 # TODO: Naive Bayes?
+# TODO: Fix colors, borders in scatter plots
+# TODO: Fix bottom border in bar plots 
+# TODO: Add graph of error metrics by model type
 
 ### contributors add model functions here #####################################
 
-
+# But probably not yet ... this is still a work in progress.
 
 ###############################################################################
 
