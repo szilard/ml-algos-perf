@@ -1,0 +1,184 @@
+,Model Name,Model Description,Data Name,N,p,Logloss,RMSE,Accuracy
+0,GBM,GBM w/ random hyperparameter search,abalone.data,2912,8,3.739,0.839,0.775
+1,RF,RF w/ early stopping,abalone.data,2912,8,3.789,0.818,0.745
+2,NN,NN w/ random hyperparameter search,abalone.data,2912,8,2.168,0.861,0.793
+3,GBM,GBM w/ random hyperparameter search,ad.data,2295,1558,0.286,0.284,0.886
+4,RF,RF w/ early stopping,ad.data,2295,1558,1.306,0.719,0.152
+5,NN,NN w/ random hyperparameter search,ad.data,2295,1558,0.319,0.334,0.822
+6,GBM,GBM w/ random hyperparameter search,adult.data,22846,14,0.483,0.396,0.753
+7,RF,RF w/ early stopping,adult.data,22846,14,0.423,0.346,0.817
+8,NN,NN w/ random hyperparameter search,adult.data,22846,14,0.320,0.321,0.853
+9,GBM,GBM w/ random hyperparameter search,agaricus-lepiota.data,5706,22,1.166,0.675,0.363
+10,RF,RF w/ early stopping,agaricus-lepiota.data,5706,22,0.573,0.475,0.386
+11,NN,NN w/ random hyperparameter search,agaricus-lepiota.data,5706,22,0.613,0.485,0.349
+12,GBM,GBM w/ random hyperparameter search,anneal.data,549,38,0.837,0.556,0.193
+13,RF,RF w/ early stopping,anneal.data,549,38,0.036,0.091,0.000
+14,NN,NN w/ random hyperparameter search,anneal.data,549,38,0.162,0.211,0.060
+15,GBM,GBM w/ random hyperparameter search,arrhythmia.data,317,279,1.765,0.479,0.252
+16,RF,RF w/ early stopping,arrhythmia.data,317,279,2.598,0.557,0.289
+17,NN,NN w/ random hyperparameter search,arrhythmia.data,317,279,2.964,0.613,0.430
+18,GBM,GBM w/ random hyperparameter search,audiology.standardized.data,143,70,11.360,0.750,0.596
+19,RF,RF w/ early stopping,audiology.standardized.data,143,70,3.130,0.558,0.298
+20,NN,NN w/ random hyperparameter search,audiology.standardized.data,143,70,2.626,0.878,0.789
+21,GBM,GBM w/ random hyperparameter search,backup-large.data,213,35,0.621,0.459,0.053
+22,RF,RF w/ early stopping,backup-large.data,213,35,0.385,0.120,0.011
+23,NN,NN w/ random hyperparameter search,backup-large.data,213,35,0.441,0.247,0.064
+24,GBM,GBM w/ random hyperparameter search,balance-scale.data,435,4,2.444,0.862,0.900
+25,RF,RF w/ early stopping,balance-scale.data,435,4,4.112,0.878,0.895
+26,NN,NN w/ random hyperparameter search,balance-scale.data,435,4,1.614,0.800,0.853
+27,GBM,GBM w/ random hyperparameter search,bands.data,376,39,1.764,0.581,0.624
+28,RF,RF w/ early stopping,bands.data,376,39,0.875,0.477,0.673
+29,NN,NN w/ random hyperparameter search,bands.data,376,39,0.705,0.479,0.691
+30,GBM,GBM w/ random hyperparameter search,bezdekIris.data,105,4,0.783,0.541,0.222
+31,RF,RF w/ early stopping,bezdekIris.data,105,4,0.872,0.234,0.067
+32,NN,NN w/ random hyperparameter search,bezdekIris.data,105,4,0.434,0.390,0.222
+33,GBM,GBM w/ random hyperparameter search,breast-cancer-wisconsin.data,482,9,0.369,0.317,0.968
+34,RF,RF w/ early stopping,breast-cancer-wisconsin.data,482,9,0.229,0.159,0.972
+35,NN,NN w/ random hyperparameter search,breast-cancer-wisconsin.data,482,9,0.123,0.168,0.963
+36,GBM,GBM w/ random hyperparameter search,car.data,1192,6,0.932,0.598,0.291
+37,RF,RF w/ early stopping,car.data,1192,6,0.167,0.221,0.037
+38,NN,NN w/ random hyperparameter search,car.data,1192,6,0.420,0.386,0.209
+39,GBM,GBM w/ random hyperparameter search,cmc.data,1008,9,1.277,0.617,0.473
+40,RF,RF w/ early stopping,cmc.data,1008,9,1.617,0.594,0.473
+41,NN,NN w/ random hyperparameter search,cmc.data,1008,9,1.789,0.701,0.578
+42,GBM,GBM w/ random hyperparameter search,CNAE-9.data,750,856,1.659,0.795,0.364
+43,RF,RF w/ early stopping,CNAE-9.data,750,856,0.747,0.511,0.091
+44,NN,NN w/ random hyperparameter search,CNAE-9.data,750,856,1.218,0.668,0.458
+45,GBM,GBM w/ random hyperparameter search,dermatology.data,252,34,1.213,0.688,0.228
+46,RF,RF w/ early stopping,dermatology.data,252,34,0.157,0.214,0.044
+47,NN,NN w/ random hyperparameter search,dermatology.data,252,34,0.647,0.444,0.193
+48,GBM,GBM w/ random hyperparameter search,echocardiogram.data,93,12,0.697,0.498,0.179
+49,RF,RF w/ early stopping,echocardiogram.data,93,12,1.043,0.269,0.077
+50,NN,NN w/ random hyperparameter search,echocardiogram.data,93,12,0.596,0.412,0.231
+51,GBM,GBM w/ random hyperparameter search,ecoli.data,231,7,1.384,0.728,0.276
+52,RF,RF w/ early stopping,ecoli.data,231,7,0.588,0.407,0.190
+53,NN,NN w/ random hyperparameter search,ecoli.data,231,7,1.110,0.550,0.248
+54,GBM,GBM w/ random hyperparameter search,eighthr.data,1777,72,0.341,0.250,0.929
+55,RF,RF w/ early stopping,eighthr.data,1777,72,0.671,0.234,0.927
+56,NN,NN w/ random hyperparameter search,eighthr.data,1777,72,0.225,0.243,0.927
+57,GBM,GBM w/ random hyperparameter search,flag.data,138,28,1.882,0.605,0.411
+58,RF,RF w/ early stopping,flag.data,138,28,3.239,0.582,0.375
+59,NN,NN w/ random hyperparameter search,flag.data,138,28,2.138,0.712,0.571
+60,GBM,GBM w/ random hyperparameter search,german.data,693,20,0.729,0.443,0.759
+61,RF,RF w/ early stopping,german.data,693,20,0.945,0.422,0.749
+62,NN,NN w/ random hyperparameter search,german.data,693,20,0.632,0.469,0.326
+63,GBM,GBM w/ random hyperparameter search,glass.data,152,9,1.469,0.762,0.371
+64,RF,RF w/ early stopping,glass.data,152,9,3.478,0.555,0.274
+65,NN,NN w/ random hyperparameter search,glass.data,152,9,1.684,0.722,0.629
+66,GBM,GBM w/ random hyperparameter search,haberman.data,212,3,0.917,0.501,0.649
+67,RF,RF w/ early stopping,haberman.data,212,3,0.663,0.478,0.670
+68,NN,NN w/ random hyperparameter search,haberman.data,212,3,0.660,0.467,0.670
+69,GBM,GBM w/ random hyperparameter search,hayes-roth.data,93,4,1.073,0.653,0.718
+70,RF,RF w/ early stopping,hayes-roth.data,93,4,5.678,0.524,0.385
+71,NN,NN w/ random hyperparameter search,hayes-roth.data,93,4,1.110,0.636,0.590
+72,GBM,GBM w/ random hyperparameter search,hepatitis.data,108,19,0.859,0.500,0.681
+73,RF,RF w/ early stopping,hepatitis.data,108,19,0.759,0.520,0.574
+74,NN,NN w/ random hyperparameter search,hepatitis.data,108,19,1.257,0.582,0.596
+75,GBM,GBM w/ random hyperparameter search,horse-colic.data,209,27,0.688,0.496,0.615
+76,RF,RF w/ early stopping,horse-colic.data,209,27,0.886,0.423,0.725
+77,NN,NN w/ random hyperparameter search,horse-colic.data,209,27,0.914,0.510,0.637
+78,GBM,GBM w/ random hyperparameter search,house-votes-84.data,307,16,0.938,0.605,0.383
+79,RF,RF w/ early stopping,house-votes-84.data,307,16,1.057,0.533,0.414
+80,NN,NN w/ random hyperparameter search,house-votes-84.data,307,16,0.929,0.564,0.453
+81,GBM,GBM w/ random hyperparameter search,ionosphere.data,241,34,0.505,0.403,0.791
+82,RF,RF w/ early stopping,ionosphere.data,241,34,0.789,0.253,0.936
+83,NN,NN w/ random hyperparameter search,ionosphere.data,241,34,0.397,0.307,0.882
+84,GBM,GBM w/ random hyperparameter search,iris.data,105,4,0.744,0.524,0.089
+85,RF,RF w/ early stopping,iris.data,105,4,0.872,0.234,0.067
+86,NN,NN w/ random hyperparameter search,iris.data,105,4,0.417,0.373,0.156
+87,GBM,GBM w/ random hyperparameter search,kr-vs-kp.data,2234,36,0.601,0.453,0.779
+88,RF,RF w/ early stopping,kr-vs-kp.data,2234,36,0.057,0.115,0.990
+89,NN,NN w/ random hyperparameter search,kr-vs-kp.data,2234,36,0.944,0.502,0.691
+90,GBM,GBM w/ random hyperparameter search,krkopt.data,19693,6,2.274,0.890,0.631
+91,RF,RF w/ early stopping,krkopt.data,19693,6,0.918,0.546,0.261
+92,NN,NN w/ random hyperparameter search,krkopt.data,19693,6,6.344,0.943,0.919
+93,GBM,GBM w/ random hyperparameter search,letter-recognition.data,14056,16,2.234,0.862,0.412
+94,RF,RF w/ early stopping,letter-recognition.data,14056,16,0.398,0.306,0.053
+95,NN,NN w/ random hyperparameter search,letter-recognition.data,14056,16,1.297,0.647,0.388
+96,GBM,GBM w/ random hyperparameter search,lung-cancer.data,23,56,0.555,0.427,0.889
+97,RF,RF w/ early stopping,lung-cancer.data,23,56,0.563,0.432,0.667
+98,NN,NN w/ random hyperparameter search,lung-cancer.data,23,56,2.475,0.576,0.667
+99,GBM,GBM w/ random hyperparameter search,magic04.data,13381,10,0.552,0.428,0.735
+100,RF,RF w/ early stopping,magic04.data,13381,10,0.411,0.303,0.879
+101,NN,NN w/ random hyperparameter search,magic04.data,13381,10,1.009,0.486,0.731
+102,GBM,GBM w/ random hyperparameter search,mammographic_masses.data,664,5,0.531,0.414,0.801
+103,RF,RF w/ early stopping,mammographic_masses.data,664,5,0.478,0.376,0.815
+104,NN,NN w/ random hyperparameter search,mammographic_masses.data,664,5,0.491,0.364,0.838
+105,GBM,GBM w/ random hyperparameter search,meta.data,370,21,1.723,0.789,0.342
+106,RF,RF w/ early stopping,meta.data,370,21,0.424,0.366,0.000
+107,NN,NN w/ random hyperparameter search,meta.data,370,21,1.854,0.786,0.576
+108,GBM,GBM w/ random hyperparameter search,movement_libras.data,247,90,2.082,0.860,0.584
+109,RF,RF w/ early stopping,movement_libras.data,247,90,2.390,0.588,0.292
+110,NN,NN w/ random hyperparameter search,movement_libras.data,247,90,2.160,0.857,0.708
+111,GBM,GBM w/ random hyperparameter search,movement_libras_1.data,33,90,2.368,0.864,0.667
+112,RF,RF w/ early stopping,movement_libras_1.data,33,90,9.482,0.755,0.583
+113,NN,NN w/ random hyperparameter search,movement_libras_1.data,33,90,4.714,0.896,0.917
+114,GBM,GBM w/ random hyperparameter search,movement_libras_10.data,187,90,2.153,0.871,0.627
+115,RF,RF w/ early stopping,movement_libras_10.data,187,90,3.191,0.575,0.337
+116,NN,NN w/ random hyperparameter search,movement_libras_10.data,187,90,2.171,0.860,0.831
+117,GBM,GBM w/ random hyperparameter search,movement_libras_5.data,65,90,2.053,0.846,0.600
+118,RF,RF w/ early stopping,movement_libras_5.data,65,90,3.780,0.641,0.480
+119,NN,NN w/ random hyperparameter search,movement_libras_5.data,65,90,2.662,0.772,0.560
+120,GBM,GBM w/ random hyperparameter search,movement_libras_8.data,96,90,2.187,0.871,0.615
+121,RF,RF w/ early stopping,movement_libras_8.data,96,90,6.261,0.694,0.513
+122,NN,NN w/ random hyperparameter search,movement_libras_8.data,96,90,2.828,0.892,0.846
+123,GBM,GBM w/ random hyperparameter search,movement_libras_9.data,33,90,5.556,0.897,0.917
+124,RF,RF w/ early stopping,movement_libras_9.data,33,90,7.676,0.864,0.750
+125,NN,NN w/ random hyperparameter search,movement_libras_9.data,33,90,7.122,0.969,1.000
+126,GBM,GBM w/ random hyperparameter search,nursery.data,9086,8,1.086,0.659,0.194
+127,RF,RF w/ early stopping,nursery.data,9086,8,0.189,0.214,0.031
+128,NN,NN w/ random hyperparameter search,nursery.data,9086,8,0.267,0.289,0.120
+129,GBM,GBM w/ random hyperparameter search,onehr.data,1779,72,0.143,0.155,0.972
+130,RF,RF w/ early stopping,onehr.data,1779,72,0.166,0.152,0.975
+131,NN,NN w/ random hyperparameter search,onehr.data,1779,72,0.091,0.162,0.964
+132,GBM,GBM w/ random hyperparameter search,parkinsons.data,139,23,34.539,1.000,1.000
+133,RF,RF w/ early stopping,parkinsons.data,139,23,34.539,1.000,1.000
+134,NN,NN w/ random hyperparameter search,parkinsons.data,139,23,7.530,0.998,1.000
+135,GBM,GBM w/ random hyperparameter search,pima-indians-diabetes.data,529,8,0.663,0.434,0.766
+136,RF,RF w/ early stopping,pima-indians-diabetes.data,529,8,0.642,0.415,0.741
+137,NN,NN w/ random hyperparameter search,pima-indians-diabetes.data,529,8,0.565,0.435,0.699
+138,GBM,GBM w/ random hyperparameter search,poker-hand-training-true.data,17569,10,1.453,0.756,0.489
+139,RF,RF w/ early stopping,poker-hand-training-true.data,17569,10,1.310,0.558,0.404
+140,NN,NN w/ random hyperparameter search,poker-hand-training-true.data,17569,10,1.008,0.579,0.510
+141,GBM,GBM w/ random hyperparameter search,post-operative.data,65,8,1.877,0.646,0.520
+142,RF,RF w/ early stopping,post-operative.data,65,8,2.426,0.599,0.480
+143,NN,NN w/ random hyperparameter search,post-operative.data,65,8,1.473,0.610,0.400
+144,GBM,GBM w/ random hyperparameter search,semeion.data,1100,265,0.210,0.233,0.933
+145,RF,RF w/ early stopping,semeion.data,1100,265,0.166,0.171,0.972
+146,NN,NN w/ random hyperparameter search,semeion.data,1100,265,0.075,0.141,0.976
+147,GBM,GBM w/ random hyperparameter search,sensor_readings_2.data,3830,2,0.602,0.451,0.017
+148,RF,RF w/ early stopping,sensor_readings_2.data,3830,2,0.439,0.127,0.016
+149,NN,NN w/ random hyperparameter search,sensor_readings_2.data,3830,2,0.467,0.394,0.218
+150,GBM,GBM w/ random hyperparameter search,sensor_readings_24.data,3830,24,0.835,0.563,0.096
+151,RF,RF w/ early stopping,sensor_readings_24.data,3830,24,0.165,0.197,0.045
+152,NN,NN w/ random hyperparameter search,sensor_readings_24.data,3830,24,0.820,0.498,0.308
+153,GBM,GBM w/ random hyperparameter search,sensor_readings_4.data,3830,4,0.692,0.498,0.022
+154,RF,RF w/ early stopping,sensor_readings_4.data,3830,4,0.436,0.125,0.016
+155,NN,NN w/ random hyperparameter search,sensor_readings_4.data,3830,4,0.599,0.437,0.233
+156,GBM,GBM w/ random hyperparameter search,soybean-large.data,213,35,0.604,0.452,0.096
+157,RF,RF w/ early stopping,soybean-large.data,213,35,0.140,0.172,0.011
+158,NN,NN w/ random hyperparameter search,soybean-large.data,213,35,0.493,0.357,0.096
+159,GBM,GBM w/ random hyperparameter search,soybean-small.data,34,35,1.336,0.733,0.615
+160,RF,RF w/ early stopping,soybean-small.data,34,35,0.060,0.085,0.000
+161,NN,NN w/ random hyperparameter search,soybean-small.data,34,35,1.327,0.646,0.538
+162,GBM,GBM w/ random hyperparameter search,spambase.data,3221,57,0.511,0.404,0.814
+163,RF,RF w/ early stopping,spambase.data,3221,57,0.207,0.236,0.934
+164,NN,NN w/ random hyperparameter search,spambase.data,3221,57,0.443,0.325,0.867
+165,GBM,GBM w/ random hyperparameter search,tae.data,106,5,1.200,0.577,0.356
+166,RF,RF w/ early stopping,tae.data,106,5,3.780,0.582,0.378
+167,NN,NN w/ random hyperparameter search,tae.data,106,5,1.414,0.713,0.800
+168,GBM,GBM w/ random hyperparameter search,tic-tac-toe.data,662,9,0.616,0.462,0.642
+169,RF,RF w/ early stopping,tic-tac-toe.data,662,9,0.362,0.269,0.936
+170,NN,NN w/ random hyperparameter search,tic-tac-toe.data,662,9,1.351,0.571,0.642
+171,GBM,GBM w/ random hyperparameter search,transfusion.data,516,4,0.886,0.471,0.677
+172,RF,RF w/ early stopping,transfusion.data,516,4,2.565,0.466,0.716
+173,NN,NN w/ random hyperparameter search,transfusion.data,516,4,0.598,0.452,0.664
+174,GBM,GBM w/ random hyperparameter search,wine.data,125,13,0.833,0.565,0.075
+175,RF,RF w/ early stopping,wine.data,125,13,0.128,0.169,0.000
+176,NN,NN w/ random hyperparameter search,wine.data,125,13,0.537,0.379,0.151
+177,GBM,GBM w/ random hyperparameter search,yeast.data,1016,8,1.759,0.602,0.427
+178,RF,RF w/ early stopping,yeast.data,1016,8,1.420,0.597,0.419
+179,NN,NN w/ random hyperparameter search,yeast.data,1016,8,1.339,0.672,0.451
+180,GBM,GBM w/ random hyperparameter search,zoo.data,71,16,1.373,0.728,0.367
+181,RF,RF w/ early stopping,zoo.data,71,16,0.229,0.252,0.033
+182,NN,NN w/ random hyperparameter search,zoo.data,71,16,1.778,0.544,0.300

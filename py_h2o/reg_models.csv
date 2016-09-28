@@ -1,0 +1,22 @@
+,Model Name,Model Description,Data Name,N,p,Mean Residual Deviance,RMSE,R2
+0,GBM,GBM w/ random hyperparameter search,housing.data,353,13,17.736,4.211,0.819
+1,RF,RF w/ early stopping,housing.data,353,13,17.982,4.241,0.817
+2,NN,NN w/ random hyperparameter search,housing.data,353,13,27.932,5.285,0.716
+3,GBM,GBM w/ random hyperparameter search,imports-85.data,145,25,19123682.049,4373.063,0.792
+4,RF,RF w/ early stopping,imports-85.data,145,25,16100934.905,4012.597,0.825
+5,NN,NN w/ random hyperparameter search,imports-85.data,145,25,17264053.310,4155.003,0.812
+6,GBM,GBM w/ random hyperparameter search,machine.data,148,9,16333.407,127.802,0.588
+7,RF,RF w/ early stopping,machine.data,148,9,12154.949,110.249,0.694
+8,NN,NN w/ random hyperparameter search,machine.data,148,9,8795.796,93.786,0.778
+9,GBM,GBM w/ random hyperparameter search,parkinsons_updrs.data,4126,21,0.002,0.046,0.765
+10,RF,RF w/ early stopping,parkinsons_updrs.data,4126,21,0.001,0.039,0.832
+11,NN,NN w/ random hyperparameter search,parkinsons_updrs.data,4126,21,0.002,0.043,0.789
+12,GBM,GBM w/ random hyperparameter search,servo.data,116,4,1.044,1.022,0.602
+13,RF,RF w/ early stopping,servo.data,116,4,1.013,1.007,0.614
+14,NN,NN w/ random hyperparameter search,servo.data,116,4,2.106,1.451,0.198
+15,GBM,GBM w/ random hyperparameter search,slump_test.data,73,9,13.283,3.645,0.780
+16,RF,RF w/ early stopping,slump_test.data,73,9,15.858,3.982,0.737
+17,NN,NN w/ random hyperparameter search,slump_test.data,73,9,12.696,3.563,0.790
+18,GBM,GBM w/ random hyperparameter search,yacht_hydrodynamics.data,213,6,25.865,5.086,0.836
+19,RF,RF w/ early stopping,yacht_hydrodynamics.data,213,6,30.707,5.541,0.805
+20,NN,NN w/ random hyperparameter search,yacht_hydrodynamics.data,213,6,76.971,8.773,0.511
